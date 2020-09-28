@@ -22,7 +22,6 @@ env:
   - PGPORT=5432
   - POSTGRES_IMAGE=mdillon/postgis:11
   - DATABASE_URL=postgres://${PGUSER}:${PGPASS}@${PGHOST}:${PGPORT}/${PGDATABASE}
-
 before_install:
   - sudo service postgresql stop
   - docker run --rm --name pg-docker -d -p ${PGPORT}:5432 --tmpfs /var/lib/postgresql/data:rw ${POSTGRES_IMAGE}
@@ -30,12 +29,10 @@ before_install:
 
 install:
   - pip install -r requirements/development.txt
-
 script:
 - flake8
 - pytest --cov -v --tb=native
 - ansible-playbook -i provisioner/hosts provisioner/site.yml --syntax-check
-
 notifications:
   email:
     on_success: change  # [always|never|change]
@@ -45,12 +42,10 @@ deploy:
   buildpack: python
   strategy: api
   api_key:
-    # travis encrypt $(heroku auth:token) --add deploy.api_key
-    secure: <add_heroku_auth_token_here>
+    secure: d5wfNLvVa4HMn2uy4zHFcHkifckR9pSZnaTYdJFzvWb2exyY12+8CoPdBFB68NM1keplWS0nQYUJOUTdTSQohtGZ5EfxdYo7DTHn7TKX0exUzkLr18qE69sFdXCZDFSXdyPrxfBnwdARFbsyaTmtSkC9aMlH+pvWWidhB8aEGWajLBL9QYGRzF0p85CdIAhnotofB55Ws2ocqHcuAPadD5JZufqqn6ePqT8ZODY7g9VsGrAiZwSU/BBjmSfwCgX/NI3roU2UHydDkVLH3lIp8t9+ygY1tt1t+PsemhJPeFmsj9UrunRzIx4HH5+Fvn1GPkORaGE7HlipYZ/6dy1Iwxz8eV9Yv8BQ+nfIUxMiVvMW3fT6s6KfP2hBGFeSBRVMVu2RYnUsreizdc1wUbGAG3tDaUUujPTrfMo9ltYCTwV3c5ZL7Eu8f3fCR8hHSOqcBV248PPLQjqZH5ozs9mk+kcALbZbwWxg3xESHugv4Y9vh+WsAAh152mN4mODIzMxOS2h1KD0ZIHDWFOZUfr6K7zp1VwgymrwdKjAaHPCZz+kNz7a1QLL+7yX7MCaFiQXMuq9biym9j9Z/khXhoD2yEYUNb8qeOv0NIAMYVvvN/f3t8f2eyNXux6XhRcWOWjXnPIHKNyJwyt9Pd3JDymFYPC2s0W28b7FyGW3DTigwnw=
   app:
-    master: fulfill-dev
-    qa: fulfill-qa
-    prod: fulfill-prod
+    master: fulfill-web
+    qa: fulfill-web
+    prod: fulfill-web
   on:
     repo: ShubhamBansal1997/fulfill-web
-
