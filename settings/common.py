@@ -7,7 +7,6 @@ import environ
 from corsheaders.defaults import default_headers
 from django.utils.translation import gettext_lazy as _
 
-
 ROOT_DIR = environ.Path(__file__) - 2  # (/a/b/myfile.py - 2 = /a/)
 APPS_DIR = ROOT_DIR.path("fulfill")
 
@@ -26,9 +25,11 @@ INSTALLED_APPS = (
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django.contrib.admin",
+    "django_filters",
     # "django.contrib.humanize",  # Useful template tags
     "fulfill.base",
     "fulfill.users",
+    "fulfill.product",
     "rest_framework",  # http://www.django-rest-framework.org/
     "rest_framework_swagger",
     "versatileimagefield",  # https://github.com/WGBH/django-versatileimagefield/
@@ -332,6 +333,7 @@ CORS_ALLOW_HEADERS = default_headers + ("access-control-allow-origin",)
 # -----------------------------------------------------------------------------
 # see: http://celery.readthedocs.org/en/latest/userguide/tasks.html#task-states
 CELERY_BROKER_URL = env("REDIS_URL", default="redis://localhost:6379/0")
+CELERY_RESULT_BACKEND = env("REDIS_URL", default="redis://localhost:6379/0")
 CELERY_ACCEPT_CONTENT = ["json"]
 CELERY_TASK_SERIALIZER = "json"
 CELERY_RESULT_SERIALIZER = "json"
