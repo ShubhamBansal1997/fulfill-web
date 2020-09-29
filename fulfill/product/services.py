@@ -5,15 +5,15 @@ import uuid
 # Third Party Stuff
 import boto3
 from botocore.config import Config
-from settings.production import (
-    AWS_ACCESS_KEY_ID,
-    AWS_S3_HOST,
-    AWS_S3_REGION_NAME,
-    AWS_SECRET_ACCESS_KEY,
-    AWS_STORAGE_BUCKET_NAME,
-)
+from django.conf import settings
 
 from fulfill.product.models import Product
+
+AWS_ACCESS_KEY_ID = getattr(settings, 'AWS_ACCESS_KEY_ID', '')
+AWS_S3_HOST = getattr(settings, 'AWS_S3_HOST', '')
+AWS_SECRET_ACCESS_KEY = getattr(settings, 'AWS_SECRET_ACCESS_KEY', '')
+AWS_STORAGE_BUCKET_NAME = getattr(settings, 'AWS_STORAGE_BUCKET_NAME', '')
+AWS_S3_REGION_NAME = getattr(settings, 'AWS_S3_REGION_NAME', '')
 
 
 def add_or_update_product(sku, description, name):
