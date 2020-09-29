@@ -8,16 +8,13 @@ from celery_progress.backend import ProgressRecorder
 from django.core.files.storage import default_storage
 
 # fulfill Stuff
-from fulfill.product.models import ProductFile
-from fulfill.product.services import add_or_update_product, update_product_file_status
+from fulfill.product.services import add_or_update_product
 
 
 @shared_task(bind=True)
-def product_upload_task(self, id):
+def product_upload_task(self, file):
     progress_recorder = ProgressRecorder(self)
-    file = ProductFile.objects.get(pk=id)
-    file = default_storage.open(str(file.file), 'r').read()
-    update_product_file_status(id, 'RUNNING', self.request.id)
+    file = default_storage.open(file, 'r').read()
     csv_reader = csv.reader(file.strip().split('\n'))
     data = list(csv_reader)
     cols, data = data[0], data[1:]
@@ -31,8 +28,6 @@ def product_upload_task(self, id):
             add_or_update_product(sku, description, name)
             result += i
             progress_recorder.set_progress(i + 1, total_count)
-        update_product_file_status(id, 'COMPLETED')
     except Exception as e:
-        update_product_file_status(id, 'FAILED')
         logging.error(f"Error while running the task {e}")
     return result
