@@ -90,6 +90,7 @@ if ENABLE_MEDIA_UPLOAD_TO_S3:
     AWS_QUERYSTRING_AUTH = False
     AWS_S3_HOST = env("DJANGO_AWS_S3_HOST", default="")
     AWS_S3_REGION_NAME = env("DJANGO_AWS_S3_REGION_NAME", default=None)
+    AWS_S3_ENDPOINT_URL = env("AWS_S3_ENDPOINT_URL", default="")
 
     # AWS cache settings, don't change unless you know what you're doing.
     AWS_EXPIRY = 60 * 60 * 24 * 7  # 1 week

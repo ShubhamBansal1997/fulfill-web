@@ -5,6 +5,7 @@ import logging
 # Third Party Stuff
 from celery import shared_task
 from celery_progress.backend import ProgressRecorder
+from django.core.files.storage import default_storage
 
 # fulfill Stuff
 from fulfill.product.models import ProductFile
@@ -14,9 +15,10 @@ from fulfill.product.services import add_or_update_product, update_product_file_
 @shared_task(bind=True)
 def product_upload_task(self, id):
     progress_recorder = ProgressRecorder(self)
-    file = ProductFile.objects.get(pk=id).file.open('r')
+    file = ProductFile.objects.get(pk=id)
+    file = default_storage.open(str(file.file), 'r').read()
     update_product_file_status(id, 'RUNNING', self.request.id)
-    csv_reader = csv.reader(file, delimiter=',')
+    csv_reader = csv.reader(file.strip().split('\n'))
     data = list(csv_reader)
     cols, data = data[0], data[1:]
     total_count = len(data)
