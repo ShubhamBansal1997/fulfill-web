@@ -28,3 +28,8 @@ ansible==2.9.13
 # Code quality
 #--------------------------------------
 pre-commit==2.4.0
+
+# Static Files and Media Storage
+# -------------------------------------
+django-storages==1.10
+boto3==1.14.56
