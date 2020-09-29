@@ -2,7 +2,7 @@
 from django.test import TestCase
 
 # fulfill Stuff
-from fulfill.product.models import Product, ProductFile
+from fulfill.product.models import Product
 from fulfill.product.services import add_or_update_product
 
 
@@ -47,15 +47,3 @@ class ProductTestCase(TestCase):
 
     def tearDown(self):
         Product.objects.all().delete()
-
-
-class ProductFileTestCase(TestCase):
-    def setUp(self):
-        ProductFile(file="test_1.csv")
-        ProductFile(file="test_2.csv")
-
-    def test_update_product_file_status(self):
-        pass
-
-    def tearDown(self):
-        ProductFile.objects.all().delete()
