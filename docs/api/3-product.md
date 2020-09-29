@@ -154,11 +154,6 @@ Delete all Products in the DB
 DELETE /api/product/deleteall
 ```
 
-
-__Request__
-```json
-```
-
 __Response__
 ```
 Status: 200 Ok
@@ -167,31 +162,47 @@ Status: 200 Ok
 }
 ```
 
-## Products file Upload
+## Products file Upload URL
 
-Used to Upload data from the file
+Return the url on which file will be uploaded from the frontend
 
 ```
-GET /api/file_upload
+GET /api/file_upload/pre_signed_url
 ```
-
-__Request__
-
-Name          | Description
---------------|-------------------------------------
-file          | file to be uploaded
 
 
 __Response__
 ```json
 
-Status: 201 Created
+Status: 200 Ok
 {
-  "id":"54b0f9cc-d0be-4cca-9316-f7d113520abc",
-  "created_at":"2020-09-28T18:21:58.858874Z",
-  "modified_at":"2020-09-28T18:21:58.858885Z",
-  "file":"test.csv",
-  "task_id":"54b0-4ccaf9cc-d0be-4cca-9316-f70abc"
+  "url":"https://ams3.digitaloceanspaces.com/testin-1234567/12321-12312-98981.csv?AWSAccessKeyId=WKCIZRY1236XYCYSQGG63NH&Signature=WKjkORzjjGi6LUl2123rUOSf6ti5mg%3D&x-amz-acl=public-read&content-type=text%2Fcsv&Expires=161201364380",
+  "filename":"54b0f9cc-d0be-4cca-9316-f7d113520abc.csv",
+}
+```
+
+## Products Upload Task Start
+
+Start the file processing of the uploaded file, returns the task_id to track the progress of the task
+
+```
+POST /api/file_upload/start_task
+```
+
+__Request__
+```json
+{
+  "filename":"54b0f9cc-d0be-4cca-9316-f7d113520abc.csv"
+}
+```
+
+__Response__
+```json
+
+Status: 200 Ok
+{
+  "task_id":"https://ams3.digitaloceanspaces.com/testin-1234567/12321-12312-98981.csv?AWSAccessKeyId=WKCIZRY1236XYCYSQGG63NH&Signature=WKjkORzjjGi6LUl2123rUOSf6ti5mg%3D&x-amz-acl=public-read&content-type=text%2Fcsv&Expires=161201364380",
+  "filename":"54b0f9cc-d0be-4cca-9316-f7d113520abc.csv"
 }
 ```
 
