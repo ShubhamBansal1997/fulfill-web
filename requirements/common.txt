@@ -43,7 +43,7 @@ raven==6.10.0
 # Async Tasks
 # -------------------------------------
 celery[redis]==4.4.7
-celery-progress==0.0.12
+celery-progress[redis,websockets]==0.0.12
 
 # Auth Stuff
 # -------------------------------------
