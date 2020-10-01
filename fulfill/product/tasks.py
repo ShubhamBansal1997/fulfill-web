@@ -4,7 +4,7 @@ import logging
 
 # Third Party Stuff
 from celery import shared_task
-from celery_progress.backend import ProgressRecorder
+from celery_progress.websockets.backend import WebSocketProgressRecorder
 from django.core.files.storage import default_storage
 
 # fulfill Stuff
@@ -13,7 +13,7 @@ from fulfill.product.services import add_or_update_product
 
 @shared_task(bind=True)
 def product_upload_task(self, file):
-    progress_recorder = ProgressRecorder(self)
+    progress_recorder = WebSocketProgressRecorder(self)
     file = default_storage.open(file, 'r').read()
     csv_reader = csv.reader(file.strip().split('\n'))
     data = list(csv_reader)
