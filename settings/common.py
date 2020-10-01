@@ -30,6 +30,7 @@ INSTALLED_APPS = (
     "fulfill.base",
     "fulfill.users",
     "fulfill.product",
+    "celery_progress",
     "rest_framework",  # http://www.django-rest-framework.org/
     "rest_framework_swagger",
     "versatileimagefield",  # https://github.com/WGBH/django-versatileimagefield/
@@ -438,4 +439,19 @@ RAVEN_CONFIG = {
 SITE_INFO = {
     "RELEASE_VERSION": RELEASE_VERSION,
     "IS_RAVEN_INSTALLED": True if RAVEN_CONFIG.get("dsn") else False,
+}
+
+INSTALLED_APPS += ("channels",)
+INSTALLED_APPS += ("celery_progress.websockets",)
+
+ASGI_APPLICATION = 'fulfill.routing.application'
+
+CHANNEL_LAYERS = {
+    'default': {
+        # This example is assuming you use redis, in which case `channels_redis` is another dependency.
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [env("REDIS_URL", default="redis://localhost:6379/0")],
+        },
+    },
 }
