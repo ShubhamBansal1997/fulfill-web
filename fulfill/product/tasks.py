@@ -5,10 +5,14 @@ import logging
 # Third Party Stuff
 from celery import shared_task
 from celery_progress.websockets.backend import WebSocketProgressRecorder
+from django.conf import settings
 from django.core.files.storage import default_storage
 
 # fulfill Stuff
-from fulfill.product.services import add_or_update_product
+from fulfill.product.services import add_or_update_bulk_product
+from fulfill.product.utils import chunked
+
+MAX_DB_INSERTIONS = getattr(settings, 'MAX_DB_INSERTIONS', 1000)
 
 
 @shared_task(bind=True)
@@ -21,13 +25,10 @@ def product_upload_task(self, file):
     total_count = len(data)
     result = 0
     try:
-        for i in range(total_count):
-            sku = data[i][cols.index('sku')]
-            description = data[i][cols.index('description')]
-            name = data[i][cols.index('name')]
-            add_or_update_product(sku, description, name)
-            result += i
-            progress_recorder.set_progress(i + 1, total_count)
+        for rows in chunked(data, MAX_DB_INSERTIONS):
+            add_or_update_bulk_product(rows, cols)
+            result += len(rows)
+            progress_recorder.set_progress(result, total_count)
     except Exception as e:
         logging.error(f"Error while running the task {e}")
     return result

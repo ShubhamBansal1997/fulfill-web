@@ -6,6 +6,7 @@ import uuid
 import boto3
 from botocore.config import Config
 from django.conf import settings
+from django.db import IntegrityError
 
 from fulfill.product.models import Product
 
@@ -16,26 +17,31 @@ AWS_STORAGE_BUCKET_NAME = getattr(settings, 'AWS_STORAGE_BUCKET_NAME', '')
 AWS_S3_REGION_NAME = getattr(settings, 'AWS_S3_REGION_NAME', '')
 
 
-def add_or_update_product(sku, description, name):
+def add_or_update_bulk_product(rows, cols):
     """
     Add product to db if doesn't exists
     Sku is used to identify if the product exists or not
     Args:
-        sku(str): sku of the product
-        description(str): description of the product
-        name(str): name of the product
+        rows(array): list of the products
+        cols(str): list of the product columns
 
     Returns:
         None
     """
+    s_index = cols.index('sku')
+    d_index = cols.index('description')
+    n_index = cols.index('name')
+    products = [
+        Product(sku=data[s_index].lower(), description=data[d_index], name=data[n_index]) for data in rows
+    ]
     try:
-        p = Product.objects.get(sku=sku.lower())
-        p.description = description
-        p.name = name
-        p.save()
-    except Product.DoesNotExist:
-        p = Product(sku=sku.lower(), description=description, name=name)
-        p.save()
+        Product.objects.bulk_create(products, ignore_conflicts=True)
+    except IntegrityError:
+        for product in products:
+            try:
+                product.save()
+            except IntegrityError:
+                continue
 
 
 def get_presigned_url():
