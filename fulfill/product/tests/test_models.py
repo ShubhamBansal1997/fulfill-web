@@ -3,7 +3,6 @@ from django.test import TestCase
 
 # fulfill Stuff
 from fulfill.product.models import Product
-from fulfill.product.services import add_or_update_product
 
 
 class ProductTestCase(TestCase):
@@ -29,17 +28,6 @@ class ProductTestCase(TestCase):
         self.assertEqual(u_p.sku, p.sku)
         self.assertEqual(u_p.name, p.name)
         self.assertNotEqual(u_p.description, "Product 2 description")
-
-    def test_add_or_create_product(self):
-        p = Product.objects.get(sku="product-1-sku")
-        sku = p.sku
-        name = p.name
-        description = p.description
-        add_or_update_product(sku, "New Name", "New Description")
-        u_p = Product.objects.get(sku=sku)
-        self.assertEqual(u_p.sku, sku)
-        self.assertNotEqual(u_p.name, name)
-        self.assertNotEqual(u_p.description, description)
 
     def test_delete_product(self):
         Product.objects.get(sku="product-1-sku").delete()
