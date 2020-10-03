@@ -38,6 +38,7 @@ INSTALLED_APPS = (
     "raven.contrib.django.raven_compat",
     "mail_templated",  # https://github.com/artemrizhov/django-mail-templated
     "django_extensions",  # http://django-extensions.readthedocs.org/
+    "rest_hooks"
 )
 
 # INSTALLED APPS CONFIGURATION
@@ -460,3 +461,14 @@ CHANNEL_LAYERS = {
 # TELL THE AMOUNT OF BULK INSERTION TO BE DONE
 # ALTER AS PER THE DB RESOURCES
 MAX_DB_INSERTIONS = env.int("MAX_DB_INSERTIONS", default=1000)
+
+# Django Hook Config
+HOOK_EVENTS = {
+    # 'any.event.name': 'App.Model.Action' (created/updated/deleted)
+    'product.added': 'product.Product.created+',
+    'product.updated': 'product.Product.updated+'
+}
+
+HOOK_DELIVERER = 'fulfill.product.tasks.deliver_hook_wrapper'
+# used when the user is not defined
+GENERAL_PURPOSE_EMAIL = env("GENERAL_PURPOSE_EMAIL", default="shubhambansal17@hotmail.com")
