@@ -1,16 +1,21 @@
 # Third Party Stuff
+from django.conf import settings
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny
+from rest_hooks.models import Hook
 
 # fulfill Stuff
 from fulfill.base import response
 from fulfill.product.models import Product
 
-from .serializers import ProductFileSerializer, ProductSerializer
+from ..users.models import User
+from .serializers import HookSerializer, ProductFileSerializer, ProductSerializer
 from .services import get_presigned_url
 from .tasks import product_upload_task
+
+GENERAL_PURPOSE_EMAIL = getattr(settings, 'GENERAL_PURPOSE_EMAIL', '')
 
 
 class ProductViewSet(viewsets.ModelViewSet):
@@ -55,3 +60,19 @@ class UploadProductViewSet(viewsets.GenericViewSet):
             return response.Ok(data)
         else:
             return response.BadRequest(serializer.errors)
+
+
+class HookViewSet(viewsets.ModelViewSet):
+    """
+    Retrieve, create, update or destroy webhooks.
+    """
+    queryset = Hook.objects.all()
+    model = Hook
+    permission_classes = (AllowAny,)
+    serializer_class = HookSerializer
+
+    def perform_create(self, serializer):
+        # adding the general user as by-default
+        # will update later
+        user = User.objects.get(email=GENERAL_PURPOSE_EMAIL)
+        serializer.save(user=user)
